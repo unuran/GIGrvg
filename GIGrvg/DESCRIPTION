@@ -1,8 +1,8 @@
 Package: GIGrvg
 Type: Package
 Title: Random Variate Generator for the GIG Distribution
-Version: 0.5
-Date: 2017-06-08
+Version: 0.6
+Date: 2022-04-26
 Author: Josef Leydold and Wolfgang Hormann
 Maintainer: Josef Leydold <josef.leydold@wu.ac.at>
 Description:
