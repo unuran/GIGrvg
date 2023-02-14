@@ -158,7 +158,7 @@ SEXP dgig(SEXP sexp_x, SEXP sexp_lambda, SEXP sexp_chi, SEXP sexp_psi, SEXP sexp
 
 /*---------------------------------------------------------------------------*/
 
-#define ZTOL DBL_EPSILON
+#define ZTOL (8.*DBL_EPSILON)
 
 SEXP rgig(SEXP sexp_n, SEXP sexp_lambda, SEXP sexp_chi, SEXP sexp_psi)
 /*---------------------------------------------------------------------------*/
@@ -220,6 +220,7 @@ SEXP do_rgig(int n, double lambda, double chi, double psi)
 /*---------------------------------------------------------------------------*/
 {
   double omega, alpha;     /* parameters of standard distribution */
+  double abs_lambda;       /* absolute value of lambda */
   SEXP sexp_res;           /* results */
   double *res;
   int i;
@@ -245,47 +246,49 @@ SEXP do_rgig(int n, double lambda, double chi, double psi)
   /* alternative parametrization */ 
   omega = sqrt(psi*chi);
   alpha = sqrt(chi/psi);
+  abs_lambda = (lambda >= 0.) ? lambda : -lambda;
+    
+  /* run generator */
+  do {
 
-  if (omega < ZTOL && lambda > 0.0) {
-    /* special cases which are basically Gamma distribution */
-    for (i=0; i<n; i++) res[i] = rgamma(lambda, 2.0/psi);
-  }
-  else if (omega < ZTOL && lambda < 0.0) {
-    /* special cases which are basically Gamma and Inverse Gamma distribution */
-    for (i=0; i<n; i++) res[i] = 1.0/rgamma(-lambda, 2.0/chi);
-  }
-
-  /* lambda == 0 ???? */
-  
-  else {
-    double lambda_old = lambda;
-    if (lambda < 0.) lambda = -lambda;
-
-    /* run generator */
-    do {
-      if (lambda > 2. || omega > 3.) {
-        /* Ratio-of-uniforms with shift by 'mode', alternative implementation */
-        _rgig_ROU_shift_alt(res, n, lambda, lambda_old, omega, alpha);
-        break;
+    if (omega < ZTOL) {
+      /* for very small values of omega we have serious round-off errors */
+      if (lambda > 0.0) {
+	/* special cases which are basically Gamma distribution */
+	for (i=0; i<n; i++) res[i] = rgamma(lambda, 2.0/psi);
+	break;
       }
-
-      if (lambda >= 1.-2.25*omega*omega || omega > 0.2) {
-        /* Ratio-of-uniforms without shift */
-        _rgig_ROU_noshift(res, n, lambda, lambda_old, omega, alpha);
-        break;
+      if (lambda < 0.0) {
+	/* special cases which are basically Gamma and Inverse Gamma distribution */
+	for (i=0; i<n; i++) res[i] = 1.0/rgamma(-lambda, 2.0/chi);
+	break;
       }
+    }
+    
+    if (abs_lambda > 2. || omega > 3.) {
+      /* Ratio-of-uniforms with shift by 'mode', alternative implementation */
+      _rgig_ROU_shift_alt(res, n, abs_lambda, lambda, omega, alpha);
+      break;
+    }
+    
+    if (abs_lambda >= 1.-2.25*omega*omega || omega > 0.2) {
+      /* Ratio-of-uniforms without shift */
+      _rgig_ROU_noshift(res, n, abs_lambda, lambda, omega, alpha);
+      break;
+    }
 
-      if (lambda >= 0. && omega > 0.) {
-        /* New approach, constant hat in log-concave part. */
-        _rgig_newapproach1(res, n, lambda, lambda_old, omega, alpha);
-        break;
-      }
-      
-      /* else */
+    if (omega > 0.) { /* remaining case */
+      /* New approach, constant hat in log-concave part. */
+      _rgig_newapproach1(res, n, abs_lambda, lambda, omega, alpha);
+      break;
+    }
+    
+    else
       error("parameters must satisfy lambda>=0 and omega>0.");
-      
-    } while (0);
-  }
+
+    /* Remark: case lambda == 0.0 and very small omega may cause numerical problems */
+    
+  } while (0);
 
   /* return result */
   UNPROTECT(1);
@@ -313,7 +316,7 @@ double _gig_mode(double lambda, double omega)
     /* mode of fgig(x) */
     return (sqrt((lambda-1.)*(lambda-1.) + omega*omega)+(lambda-1.))/omega;
   else
-    /* 0 <= lambda < 1: use mode of f(1/x) */
+    /* 0 <= lambda < 1: use reciprocal of mode of f(1/x) */
     return omega / (sqrt((1.-lambda)*(1.-lambda) + omega*omega)+(1.-lambda));
 } /* end of _gig_mode() */
 
