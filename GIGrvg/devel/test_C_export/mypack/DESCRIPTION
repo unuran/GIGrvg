@@ -1,0 +1,13 @@
+Package: mypack
+Type: Package
+Title: Test for exported C function 'rgig' in package 'mypack' 
+Version: 0.1
+Date: 2017-06-09
+Author: Josef Leydold
+Maintainer: Josef Leydold <josef.leydold@wu.ac.at>
+Description:
+  Test for exported C function 'rgig' in package 'mypack'.
+Depends: GIGrvg
+LinkingTo: GIGrvg
+License: GPL (>=2)
+LazyLoad: yes
