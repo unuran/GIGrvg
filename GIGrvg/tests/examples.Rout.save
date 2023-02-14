@@ -1,6 +1,6 @@
 
-R version 3.1.0 (2014-04-10) -- "Spring Dance"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -1264,8 +1264,9 @@ f=1.9724; logf=0.67925	; lambda=100; chi=100; psi=100;mode=2.39716
 > 
 > ## --- check handling of invalid parameters ----------------------------------
 > 
-> stopifnot (iserror(rgig(0, 1,1,1)), TRUE)
-Error in rgig(0, 1, 1, 1) : sample size 'n' must be positive integer.
+> stopifnot (iserror(rgig(-1, 1,1,1)), TRUE)
+Error in rgig(-1, 1, 1, 1) : 
+  sample size 'n' must be non-negative integer.
 > 
 > stopifnot (iserror(rgig(1,-1,-1, 1)), TRUE)
 Error in rgig(1, -1, -1, 1) : 
@@ -1732,4 +1733,4 @@ x=2.9358;	lambda=100; chi=100; psi=100
 > 
 > proc.time()
    user  system elapsed 
-  0.284   0.020   0.290 
+  0.270   0.015   0.280 

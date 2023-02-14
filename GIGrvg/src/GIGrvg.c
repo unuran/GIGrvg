@@ -158,7 +158,7 @@ SEXP dgig(SEXP sexp_x, SEXP sexp_lambda, SEXP sexp_chi, SEXP sexp_psi, SEXP sexp
 
 /*---------------------------------------------------------------------------*/
 
-#define ZTOL (DBL_EPSILON*10.0)
+#define ZTOL DBL_EPSILON
 
 SEXP rgig(SEXP sexp_n, SEXP sexp_lambda, SEXP sexp_chi, SEXP sexp_psi)
 /*---------------------------------------------------------------------------*/
@@ -225,8 +225,8 @@ SEXP do_rgig(int n, double lambda, double chi, double psi)
   int i;
 
   /* check sample size */
-  if (n<=0) {
-    error("sample size 'n' must be positive integer.");
+  if (n<0) {
+    error("sample size 'n' must be non-negative integer.");
   }
 
   /* check GIG parameters: */
@@ -242,32 +242,24 @@ SEXP do_rgig(int n, double lambda, double chi, double psi)
   PROTECT(sexp_res = NEW_NUMERIC(n));
   res = REAL(sexp_res);
 
-  if (chi < ZTOL) { 
+  /* alternative parametrization */ 
+  omega = sqrt(psi*chi);
+  alpha = sqrt(chi/psi);
+
+  if (omega < ZTOL && lambda > 0.0) {
+    /* special cases which are basically Gamma distribution */
+    for (i=0; i<n; i++) res[i] = rgamma(lambda, 2.0/psi);
+  }
+  else if (omega < ZTOL && lambda < 0.0) {
     /* special cases which are basically Gamma and Inverse Gamma distribution */
-    if (lambda > 0.0) {
-      for (i=0; i<n; i++) res[i] = rgamma(lambda, 2.0/psi); 
-    }
-    else {
-      for (i=0; i<n; i++) res[i] = 1.0/rgamma(-lambda, 2.0/psi); 
-    }    
+    for (i=0; i<n; i++) res[i] = 1.0/rgamma(-lambda, 2.0/chi);
   }
 
-  else if (psi < ZTOL) {
-    /* special cases which are basically Gamma and Inverse Gamma distribution */
-    if (lambda > 0.0) {
-      for (i=0; i<n; i++) res[i] = 1.0/rgamma(lambda, 2.0/chi); 
-    }
-    else {
-      for (i=0; i<n; i++) res[i] = rgamma(-lambda, 2.0/chi); 
-    }    
-
-  }
-
+  /* lambda == 0 ???? */
+  
   else {
     double lambda_old = lambda;
     if (lambda < 0.) lambda = -lambda;
-    alpha = sqrt(chi/psi);
-    omega = sqrt(psi*chi);
 
     /* run generator */
     do {
@@ -300,7 +292,6 @@ SEXP do_rgig(int n, double lambda, double chi, double psi)
   return sexp_res;
 
 } /* end of do_rgig() */
-
 
 /*****************************************************************************/
 /* Privat Functions                                                          */
