@@ -33,7 +33,6 @@ check:
 	(unset TEXINPUTS; _R_CHECK_TIMINGS_=0 ${R} CMD check ${project}_*.tar.gz)
 
 valgrind:
-	make build
 	(unset TEXINPUTS; _R_CHECK_TIMINGS_=0 ${R} CMD check --use-valgrind ${project}_*.tar.gz)
 
 # --- Clear working space ---------------------------------------------------

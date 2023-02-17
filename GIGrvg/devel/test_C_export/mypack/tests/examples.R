@@ -154,8 +154,6 @@ for (l in lambda) { for (c in chi) { for (p in psi) {
 
 ## --- check handling of invalid parameters ----------------------------------
 
-stopifnot (iserror(myrgig(0, 1,1,1)), TRUE)
-
 stopifnot (iserror(myrgig(1,-1,-1, 1)), TRUE)
 stopifnot (iserror(myrgig(1,-1, 0, 1)), TRUE)
 stopifnot (iserror(myrgig(1,-1, 1,-1)), TRUE)
@@ -171,6 +169,12 @@ stopifnot (iserror(myrgig(1, 1, 1,-1)), TRUE)
 
 if(!interactive())
     set.seed(123)
+
+## should return numeric(0) 
+x <- myrgig(0, 1,1,1)
+if (! (is.numeric(x) && length(x) == 0)) {
+    stop("rgig(0) not equal numeric(0)")
+}
 
 lambda <- c(-100, -10, -1, -0.1, 0, 0.1, 1, 10, 100)
 chi <- c(0, 1e-12, 0.01, 0.1, 1, 10, 100)
