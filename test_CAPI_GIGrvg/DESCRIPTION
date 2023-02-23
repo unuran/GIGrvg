@@ -1,12 +1,12 @@
-Package: mypack
+Package: test.CAPI.GIGrvg
 Type: Package
-Title: Test for exported C function 'rgig' in package 'mypack' 
+Title: Test GIGrvg C API
 Version: 0.1
-Date: 2017-06-09
+Date: 2023-02-23
 Author: Josef Leydold
 Maintainer: Josef Leydold <josef.leydold@wu.ac.at>
 Description:
-  Test for exported C function 'rgig' in package 'mypack'.
+  Test for exported C functions in package 'Tinflex'.
 Depends: GIGrvg
 LinkingTo: GIGrvg
 License: GPL (>=2)

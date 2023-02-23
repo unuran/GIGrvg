@@ -1,3 +1,0 @@
-useDynLib(mypack, .registration=TRUE, .fixes="C_")
-
-export("myrgig")
