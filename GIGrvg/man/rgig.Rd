@@ -89,7 +89,7 @@ dgig(x, lambda, chi, psi, log = FALSE)
 \references{%
   Wolfgang \enc{Hörmann}{Hoermann} and Josef Leydold (2013).
   Generating generalized inverse Gaussian random variates,
-  Statistics and Computing 24, 547-–557,
+  Statistics and Computing 24, 547--557,
   DOI: 10.1007/s11222-013-9387-3
 
   J. S. Dagpunar (1989).
