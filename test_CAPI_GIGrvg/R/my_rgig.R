@@ -17,5 +17,5 @@ myrgig <- function(n=1, lambda, chi, psi) {
   ## ------------------------------------------------------------------------
 
   ## generate sample
-  .Call("my_rgig", n, lambda, chi, psi, PACKAGE="mypack")
+  .Call("my_rgig", n, lambda, chi, psi, PACKAGE="test.CAPI.GIGrvg")
 }

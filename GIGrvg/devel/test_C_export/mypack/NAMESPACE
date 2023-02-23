@@ -1,5 +1,0 @@
-useDynLib(mypack, .registration=TRUE, .fixes="C_")
-
-import("GIGrvg")
-
-export("myrgig")

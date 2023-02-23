@@ -1,0 +1,5 @@
+useDynLib(test.CAPI.GIGrvg, .registration=TRUE, .fixes="C_")
+
+import("GIGrvg")
+
+export("myrgig")

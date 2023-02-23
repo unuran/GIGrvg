@@ -1,3 +1,8 @@
+#############################################################################
+#
+#  Makefile for building and checking R package 'GIGrvg'
+#
+#############################################################################
 
 # --- Constants -------------------------------------------------------------
 
@@ -15,55 +20,73 @@ all: help
 
 help:
 	@echo ""
-	@echo "build  ... build package 'GIGrvg'"
-	@echo "check  ... check package 'GIGrvg'"
+	@echo "build  ... build package '${project}'"
+	@echo "check  ... check package '${project}'"
 	@echo "clean  ... clear working space"
 	@echo ""
-	@echo "valgrind ... check package 'GIGrvg' using valgrind"
+	@echo "valgrind ... check package '${project}' using valgrind (slow!)"
 	@echo ""
-	@echo "C_API_check    ... check C API of package 'GIGrvg'"
-	@echo "C_API_valgrind ... check C API of package 'GIGrvg' using valgrind"
+	@echo "CAPI-check ... check C API of package '${project}'"
+	@echo "CAPI-valgrind ... check C API of package '${project}' using valgrind (slow!)"
 	@echo ""
 
 # --- Phony targets ---------------------------------------------------------
 
 .PHONY: all help clean maintainer-clean clean build check
 
-# --- rgig ------------------------------------------------------------------
+# --- GIGrvg ----------------------------------------------------------------
 
 build:
 	${R} CMD build ${project}
 
 check:
-	(unset TEXINPUTS; _R_CHECK_TIMINGS_=0 ${R} CMD check --as-cran ${project}_*.tar.gz)
+	(unset TEXINPUTS; ${R} CMD check --as-cran ${project}_*.tar.gz)
 
 valgrind:
-	(unset TEXINPUTS; _R_CHECK_TIMINGS_=0 ${R} CMD check --use-valgrind ${project}_*.tar.gz)
+	(unset TEXINPUTS; ${R} CMD check --use-valgrind ${project}_*.tar.gz)
+	@echo -e "\n * Valgrind output ..."
+	@for Rout in `find ${project}.Rcheck/ -name *.Rout`; \
+		do echo -e "\n = $$Rout:\n"; \
+		grep -e '^==[0-9]\{3,\}== ' $$Rout; \
+	done
 
-# --- C API -----------------------------------------------------------------
+pkg-clean:
+	@rm -rf ${project}.Rcheck
+	@rm -fv ${project}_*.tar.gz
+	@rm -fv ./${project}/src/*.o ./${project}/src/*.so
 
-C_API_check:
-	@echo "Checking C API of package 'GIGrvg'!"
-	@echo "You must Package 'GIGrvg' installed!" | sed 'h;s/./=/g;p;x;p;x'
-	(cd ./GIGrvg/devel/test_C_export/ && make build check)
 
-C_API_valgrind:
-	@echo "Checking C API of package 'GIGrvg'!"
-	@echo "You must Package 'GIGrvg' installed!" | sed 'h;s/./=/g;p;x;p;x'
-	(cd ./GIGrvg/devel/test_C_export/ && make build valgrind)
+# --- GIGrvg C API test -----------------------------------------------------
 
-C_API_clean:
-	@rm -fv ${project}/devel/test_C_export/mypack_*.tar.gz
-	@rm -rf ${project}/devel/test_C_export/mypack.Rcheck
+CAPI-build:
+	@echo -e "\n * Checking C API of package '${project}'!\n"
+	@echo "Ensure that package '${project}' is installed!" | sed 'h;s/./=/g;p;x;p;x'
+	@echo -e "\n * Building package ...\n"
+	${R} CMD build test_CAPI_${project}
+
+CAPI-check: CAPI-build
+	@echo -e "\n * Checking package ...\n"
+	(unset TEXINPUTS; ${R} CMD check test.CAPI.${project}_*.tar.gz)
+
+CAPI-valgrind: CAPI-build
+	@echo -e "\n * Checking package ...\n"
+	(unset TEXINPUTS; ${R} CMD check --use-valgrind test.CAPI.${project}_*.tar.gz)
+	@echo -e "\n * Valgrind output ..."
+	@for Rout in `find test.CAPI.${project}.Rcheck/ -name *.Rout`; \
+		do echo -e "\n = $$Rout:\n"; \
+		grep -e '^==[0-9]\{3,\}== ' $$Rout; \
+	done
+
+CAPI-clean:
+	@rm -rf test.CAPI.${project}.Rcheck
+	@rm -fv test.CAPI.${project}_*.tar.gz
 
 # --- Clear working space ---------------------------------------------------
 
 clean:
-	@rm -rf ${project}.Rcheck
-	@rm -fv ${project}_*.tar.gz
-	@rm -fv ${project}/src/*.o ${project}/src/*.so
+	@make pkg-clean
+	@make CAPI-clean
 	@find -L . -type f -name "*~" -exec rm -v {} ';'
-	@make C_API_clean
 
 maintainer-clean: clean
 

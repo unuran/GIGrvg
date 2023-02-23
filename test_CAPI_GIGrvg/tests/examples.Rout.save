@@ -16,8 +16,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > 
-> library(mypack)
-Loading required package: GIGrvg
+> library(GIGrvg)
+> library(test.CAPI.GIGrvg)
 > 
 > ## --- auxiliary functions ---------------------------------------------------
 > 
@@ -1697,4 +1697,4 @@ x=2.9358;	lambda=100; chi=100; psi=100
 > 
 > proc.time()
    user  system elapsed 
-  0.319   0.011   0.342 
+  0.284   0.014   0.325 

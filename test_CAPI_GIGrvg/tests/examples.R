@@ -1,5 +1,6 @@
 
-library(mypack)
+library(GIGrvg)
+library(test.CAPI.GIGrvg)
 
 ## --- auxiliary functions ---------------------------------------------------
 
