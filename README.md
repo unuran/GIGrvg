@@ -1,9 +1,14 @@
 # GIGrvg
 
-R package for sampling from the Generalized Inverse Gaussian (GIG) distribution.
+R package 
+[*GIGrvg*](https://CRAN.R-project.org/package=GIGrvg)
+for sampling from the Generalized Inverse Gaussian (GIG) distribution.
 
 The package also exports its C routines for linking into into other R
 packages.
+
+The package can be installed from
+[CRAN](https://CRAN.R-project.org/package=GIGrvg).
 
 ## Build and check
 
@@ -19,7 +24,7 @@ See `Makefile` for building and checking the package.
   See also Research Report Series / Department of Statistics and Mathematics 
   Nr. 123, Department of Statistics and Mathematics,
   WU Vienna University of Economics and Business,
-  <https://research.wu.ac.at/en/publications/generating-generalized-inverse-gaussian-random-variates-3>.
+  URL: <https://research.wu.ac.at/en/publications/generating-generalized-inverse-gaussian-random-variates-3>.
 
 * J. S. Dagpunar (1989).
   An easily implemented generalised inverse Gaussian generator,
