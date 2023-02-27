@@ -1,4 +1,4 @@
-# GIGrvg
+# GIGrvg (CRAN Package)
 
 R package 
 [*GIGrvg*](https://CRAN.R-project.org/package=GIGrvg)
