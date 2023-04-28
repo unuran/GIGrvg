@@ -12,27 +12,24 @@ project = GIGrvg
 # name of R program
 R = R
 
-# --- Default target --------------------------------------------------------
-
-all: help
-
-# --- Help ------------------------------------------------------------------
+# --- Help (default target) -------------------------------------------------
 
 help:
 	@echo ""
-	@echo "build  ... build package '${project}'"
-	@echo "check  ... check package '${project}'"
-	@echo "clean  ... clear working space"
+	@echo "  build    ... build package '${project}'"
+	@echo "  check    ... check package '${project}' (run 'R CMD check')"
+	@echo "  version  ... update version number and release date in documentation"
+	@echo "  valgrind ... check package '${project}' using valgrind (very slow!)"
+	@echo "  clean    ... clear working space"
 	@echo ""
-	@echo "valgrind ... check package '${project}' using valgrind (slow!)"
-	@echo ""
-	@echo "CAPI-check ... check C API of package '${project}'"
-	@echo "CAPI-valgrind ... check C API of package '${project}' using valgrind (slow!)"
+	@echo "  CAPI-check ... check C API of package '${project}'"
+	@echo "  CAPI-valgrind ... check C API of package '${project}' using valgrind (very slow!)"
 	@echo ""
 
 # --- Phony targets ---------------------------------------------------------
 
-.PHONY: all help clean maintainer-clean clean build check
+.PHONY: help  build check clean valgrind version CAPI-build CAPI-check CAPI-valgrind
+
 
 # --- GIGrvg ----------------------------------------------------------------
 
@@ -42,6 +39,9 @@ build:
 check:
 	(unset TEXINPUTS; ${R} CMD check --as-cran ${project}_*.tar.gz)
 
+version:
+	(cd ${project} && ../scripts/update-docu.pl -u)
+
 valgrind:
 	(unset TEXINPUTS; ${R} CMD check --use-valgrind ${project}_*.tar.gz)
 	@echo -e "\n * Valgrind output ..."
@@ -49,12 +49,6 @@ valgrind:
 		do echo -e "\n = $$Rout:\n"; \
 		grep -e '^==[0-9]\{3,\}== ' $$Rout; \
 	done
-
-pkg-clean:
-	@rm -rf ${project}.Rcheck
-	@rm -fv ${project}_*.tar.gz
-	@rm -fv ./${project}/src/*.o ./${project}/src/*.so
-
 
 # --- GIGrvg C API test -----------------------------------------------------
 
@@ -77,17 +71,19 @@ CAPI-valgrind: CAPI-build
 		grep -e '^==[0-9]\{3,\}== ' $$Rout; \
 	done
 
-CAPI-clean:
-	@rm -rf test.CAPI.${project}.Rcheck
-	@rm -fv test.CAPI.${project}_*.tar.gz
 
 # --- Clear working space ---------------------------------------------------
 
 clean:
-	@make pkg-clean
-	@make CAPI-clean
+# Remove compiled files
+	@rm -fv ./${project}/src/*.o ./${project}/src/*.so
+# Remove R package files
+	@rm -rf ${project}.Rcheck
+	@rm -fv ${project}_*.tar.gz
+# Remove emacs backup files
 	@find -L . -type f -name "*~" -exec rm -v {} ';'
-
-maintainer-clean: clean
+# Remove CAPI files 
+	@rm -rf test.CAPI.${project}.Rcheck
+	@rm -fv test.CAPI.${project}_*.tar.gz
 
 # --- End -------------------------------------------------------------------
