@@ -3,10 +3,15 @@ Type: Package
 Title: Random Variate Generator for the GIG Distribution
 Version: 0.8
 Date: 2023-03-22
-Author: Josef Leydold and Wolfgang Hormann
+Authors@R: c(person("Josef", "Leydold",
+                    role = c("aut", "cre"),
+                    email = "josef.leydold@wu.ac.at",
+                    comment = c(ORCID = "0000-0002-9076-4893")),
+             person("Wolfgang", "H\"ormann", role = "aut"))
 Maintainer: Josef Leydold <josef.leydold@wu.ac.at>
 Description:
   Generator and density function for the
   Generalized Inverse Gaussian (GIG) distribution.
 License: GPL (>=2)
 LazyLoad: yes
+URL: https://github.com/unuran/GIGrvg
